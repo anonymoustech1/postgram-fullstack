@@ -39,8 +39,10 @@ jobs:
       - name: Check container status
         run: docker compose ps
 
-      - name: Show logs
-        run: docker compose logs
+      - name: Show container logs
+        run: |
+          docker compose logs api
+          docker compose logs db
 
       - name: Run Tests
         run: docker compose exec -T api pytest

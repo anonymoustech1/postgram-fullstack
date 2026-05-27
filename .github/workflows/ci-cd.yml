@@ -27,27 +27,24 @@ jobs:
           DJANGO_ALLOWED_HOSTS=127.0.0.1,localhost
           EOF
 
-      - name: Build and Start Containers
-        run: |
-          docker compose up -d --build
+      - name: Build Containers
+        run: docker compose build
 
-      - name: Wait for database
-        run: sleep 15
+      - name: Start Containers
+        run: docker compose up -d
 
-      - name: Run Migrations
-        run: |
-          docker compose exec -T api python manage.py migrate
+      - name: Wait for API & DB
+        run: sleep 20
+
+      - name: Check container status
+        run: docker compose ps
+
+      - name: Show logs
+        run: docker compose logs
 
       - name: Run Tests
-        run: |
-          docker compose exec -T api pytest
+        run: docker compose exec -T api pytest
 
-      - name: Show Logs if Failed
-        if: failure()
-        run: |
-          docker compose logs
-
-      - name: Stop Containers
+      - name: Cleanup
         if: always()
-        run: |
-          docker compose down
+        run: docker compose down

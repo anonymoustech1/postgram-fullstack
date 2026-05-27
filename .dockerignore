@@ -1,0 +1,14 @@
+node_modules
+**/node_modules
+
+social-media-app
+
+env
+venv
+.venv
+
+.git
+__pycache__
+*.pyc
+.cache
+.DS_Store

@@ -1,0 +1,32 @@
+name: Build, Test and Deploy Postgram
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Injecting environment vars
+        run: |
+          echo "SECRET_KEY=9)!*!5pycwm-%7fnmx+8xbmxxu3(xt@nn)afl*69m-moudjwnl
+          DATABASE_NAME=test_coredb
+          DATABASE_PASSWORD=12345
+          DATABASE_HOST=test_postagram_db
+          DATABASE_PORT=5432
+          POSTGRES_USER=test_core
+          POSTGRES_PASSWORD=12345678
+          POSTGRES_DB=test_coredb
+          ENV=TESTING
+          DJANGO_ALLOWED_HOSTS=127.0.0.1, localhost" >> .env
+
+      - name: Building containers
+        run: |
+          docker-compose up -d --build
+
+      - name: Running Tests
+        run: |
+          docker-compose exec -T api pytest

@@ -1,39 +1,50 @@
-version: '3.8'
+name: Build, Test and Deploy Postgram
 
-services:
-  nginx:
-    container_name: postagram_web
-    restart: always
-    image: nginx:latest
-    volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
-      - uploads_volumn:/app/uploads
-    ports:
-      - "80:80"
-    depends_on:
-      - api
+on:
+  push:
+    branches:
+      - main
 
-  db:
-    container_name: postagram_db
-    image: postgres:14.3-alpine
-    env_file: .env
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
+jobs:
+  build-tests:
+    runs-on: ubuntu-latest
 
-  api:
-    container_name: postagram_api
-    build: .
-    restart: always
-    env_file: .env
-    ports:
-      - "8000:8000"
-    command: >
-      sh -c "python manage.py migrate --no-input && gunicorn CoreRoot.wsgi:application --bind 0.0.0.0:8000"
-    volumes:
-      - uploads_volumn:/app/uploads
-    depends_on:
-      - db
+    steps:
+      - uses: actions/checkout@v4
 
-volumes:
-  uploads_volumn:
-  postgres_data:
+      - name: Create .env file
+        run: |
+          cat > .env << EOF
+          SECRET_KEY=9)!*!5pycwm-%7fnmx+8xbmxxu3(xt@nn)afl*69m-moudjwnl
+          DATABASE_NAME=test_coredb
+          DATABASE_PASSWORD=12345
+          DATABASE_HOST=db
+          DATABASE_PORT=5432
+          POSTGRES_USER=test_core
+          POSTGRES_PASSWORD=12345678
+          POSTGRES_DB=test_coredb
+          ENV=TESTING
+          DJANGO_ALLOWED_HOSTS=127.0.0.1,localhost
+          EOF
+
+      - name: Build Containers
+        run: docker compose build
+
+      - name: Start Containers
+        run: docker compose up -d
+
+      - name: Wait for API & DB
+        run: sleep 20
+
+      - name: Check container status
+        run: docker compose ps
+
+      - name: Show logs
+        run: docker compose logs
+
+      - name: Run Tests
+        run: docker compose exec -T api pytest
+
+      - name: Cleanup
+        if: always()
+        run: docker compose down

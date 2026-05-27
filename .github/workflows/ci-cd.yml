@@ -2,31 +2,52 @@ name: Build, Test and Deploy Postgram
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   build-tests:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
 
-      - name: Injecting environment vars
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create .env file
         run: |
-          echo "SECRET_KEY=9)!*!5pycwm-%7fnmx+8xbmxxu3(xt@nn)afl*69m-moudjwnl
+          cat > .env << EOF
+          SECRET_KEY=9)!*!5pycwm-%7fnmx+8xbmxxu3(xt@nn)afl*69m-moudjwnl
           DATABASE_NAME=test_coredb
           DATABASE_PASSWORD=12345
-          DATABASE_HOST=test_postagram_db
+          DATABASE_HOST=db
           DATABASE_PORT=5432
           POSTGRES_USER=test_core
           POSTGRES_PASSWORD=12345678
           POSTGRES_DB=test_coredb
           ENV=TESTING
-          DJANGO_ALLOWED_HOSTS=127.0.0.1, localhost" >> .env
+          DJANGO_ALLOWED_HOSTS=127.0.0.1,localhost
+          EOF
 
-      - name: Building containers
+      - name: Build and Start Containers
         run: |
           docker compose up -d --build
 
-      - name: Running Tests
+      - name: Wait for database
+        run: sleep 15
+
+      - name: Run Migrations
+        run: |
+          docker compose exec -T api python manage.py migrate
+
+      - name: Run Tests
         run: |
           docker compose exec -T api pytest
+
+      - name: Show Logs if Failed
+        if: failure()
+        run: |
+          docker compose logs
+
+      - name: Stop Containers
+        if: always()
+        run: |
+          docker compose down

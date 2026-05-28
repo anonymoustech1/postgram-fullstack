@@ -8,6 +8,56 @@ on:
 jobs:
   build-tests:
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create .env file
+        run: |
+          cat > .env << EOF
+          SECRET_KEY=9)!*!5pycwm-%7fnmx+8xbmxxu3(xt@nn)afl*69m-moudjwnl
+          DATABASE_NAME=test_coredb
+          DATABASE_PASSWORD=12345
+          DATABASE_HOST=db
+          DATABASE_PORT=5432
+          POSTGRES_USER=test_core
+          POSTGRES_PASSWORD=12345678
+          POSTGRES_DB=test_coredb
+          ENV=TESTING
+          DJANGO_ALLOWED_HOSTS=127.0.0.1,localhost
+          EOF
+
+      - name: Build Containers
+        run: docker compose build
+
+      - name: Start Containers
+        run: docker compose up -d
+
+      - name: Wait for API & DB
+        run: sleep 30
+
+      - name: Check container status
+        run: docker compose ps
+
+      - name: Show container logs
+        run: |
+          docker compose logs api
+          docker compose logs db
+
+      - name: Run Tests
+        run: docker compose exec -T api pytest
+
+      - name: Cleanup
+        if: always()
+        run: docker compose downname: Build, Test and Deploy Postgram
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-tests:
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -43,6 +93,7 @@ jobs:
         run: |
           docker compose logs api
           docker compose logs db
+          
 
       - name: Run Tests
         run: docker compose exec -T api pytest

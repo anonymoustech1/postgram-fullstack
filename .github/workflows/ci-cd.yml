@@ -28,17 +28,16 @@ jobs:
         run: docker compose up -d db
 
       - name: Wait for DB to be ready
-        run: |
-          sleep 20
-          docker compose ps
+        run: sleep 20
 
       - name: Start API
         run: docker compose up -d api
 
       - name: Wait for API to be ready
-        run: |
-          sleep 30
-          docker compose logs api --tail=30
+        run: sleep 30
+
+      - name: Show API logs
+        run: docker compose logs api
 
       - name: Run Tests
         run: docker compose exec -T api pytest

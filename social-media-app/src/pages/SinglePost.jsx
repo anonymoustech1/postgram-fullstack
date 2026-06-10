@@ -14,9 +14,9 @@ const SinglePost = () => {
     let { postId } = useParams();
     console.log(useParams())
     // Stay while revalidate(useSWR) 1.e auto fetching and display in the UI component 
-    const post = useSWR(`/api/post/${postId}/`, fetcher);
+    const post = useSWR(`/post/${postId}/`, fetcher);
 
-    const comments = useSWR(`/api/post/${postId}/comment/`, fetcher);
+    const comments = useSWR(`/post/${postId}/comment/`, fetcher);
 
   return (
     <Layout hasNavigationBack>

@@ -36,7 +36,7 @@ function UpdatePost(props) {
             body: form.body,
         };
         axiosService
-        .put(`/api/post/${post.id}/`, data)
+        .put(`/post/${post.id}/`, data)
         .then((response)=>{
 
             console.log("Update successsful:", response.data)

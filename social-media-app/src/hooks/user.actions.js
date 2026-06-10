@@ -3,8 +3,12 @@ import axiosService from "../helpers/axios";
 import axios from "axios";
 
 function useUserActions() {
-  const navigate = useNavigate(); 
-  const baseURL = "http://localhost:8000/api";
+
+  const navigate = useNavigate();
+  //  before deployment
+//  const baseURL = "http://localhost:8000/api";
+//change to
+  const baseURL = process.env.REACT_APP_API_URL;
 
   return {
     login,
@@ -100,7 +104,7 @@ function setUserData(data) {
 // const { createPost } = useUserActions();
 // createPost({ title: "my new post", author: "Something cool" });
 function createPost(data){
-  return axiosService.post("/api/post/", data)
+  return axiosService.post("/post/", data)
   .then((res) =>{
     console.log("Post created successfully:", res.data);
     return res.data

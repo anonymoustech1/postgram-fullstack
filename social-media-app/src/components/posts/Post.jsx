@@ -24,7 +24,7 @@ import Toaster from "../Toaster";
     console.log('Like action:', action, 'Post ID:', post.id) // Debug log
     
     axiosService
-      .post(`/api/post/${post.id}/${action}/`)
+      .post(`/post/${post.id}/${action}/`)
       .then((response) => {
         console.log('Like successful:', response.data) // to see the log in the console.
         refresh();
@@ -37,7 +37,7 @@ import Toaster from "../Toaster";
 
   const handleDelete = () => {
     axiosService
-      .delete(`/api/post/${post.id}/`)
+      .delete(`/post/${post.id}/`)
       .then(() => {
         setShowToast(true);
         setToaster({

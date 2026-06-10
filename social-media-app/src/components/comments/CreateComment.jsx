@@ -39,7 +39,7 @@ function CreateComment(props) {
             post: postId,
         };
 
-        axiosService.post(`/api/post/${postId}/comment/`, data)
+        axiosService.post(`/post/${postId}/comment/`, data)
         .then(() =>{
             // handleClose();
             setForm({...form, body: "" });

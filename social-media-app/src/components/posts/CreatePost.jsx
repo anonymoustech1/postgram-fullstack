@@ -34,7 +34,7 @@ const CreatePost = (props) => {
             author: user.id,
             body: form.body,
         };
-        axiosService.post("/api/post/", data)
+        axiosService.post("/post/", data)
         
         .then(()=>{
             handleClose();

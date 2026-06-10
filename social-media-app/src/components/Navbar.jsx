@@ -7,14 +7,23 @@ import { getUser } from "../hooks/user.actions";
 // import { Context } from "./Layout";
 
 function Navigationbar() {
-    // const { setToaster } = useContext(context);
+    const { setToaster } = useContext(context);
     const user = getUser()
-    // const userActions = useUserActions();
+    const userActions = useUserActions();
 
     const navigate = useNavigate();
+
     const handleLogout = () => {
-        localStorage.removeItem("");
-        navigate("/login/");
+//         localStorage.removeItem("");
+//         navigate("/login/");
+        userActions.logout().catch((e) =>
+        setToaster({
+            type: "danger",
+            message: "Logout failed",
+            show: true,
+            title: e.data?.detail | "An error occurred.",
+            })
+        )
     };
 
     return (
@@ -40,8 +49,9 @@ function Navigationbar() {
                             Profile
 
                             </NavDropdown.Item>
-                            <NavDropdown.Item onClick={handleLogout}>Logout
 
+                            <NavDropdown.Item onClick={userActions.logout}>
+                                logout
                             </NavDropdown.Item>
 
                         </NavDropdown>

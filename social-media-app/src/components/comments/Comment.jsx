@@ -22,7 +22,7 @@ const Comment = (props) => {
     const user = getUser();
 
     const handleLikeClick =(action) => {
-        axiosService.post(`/api/post/${postId}/comment/${comment.id}/${action}/`)
+        axiosService.post(`/post/${postId}/comment/${comment.id}/${action}/`)
         .then(()=>{
             refresh();
         })
@@ -30,7 +30,7 @@ const Comment = (props) => {
     };
 
     const handleDelete = (commentPublicId) => {
-        axiosService.delete(`/api/post/${postId}/comment/${comment.id}/`)
+        axiosService.delete(`/post/${postId}/comment/${comment.id}/`)
         .then(()=> {
             setToaster({
                 type: "danger",

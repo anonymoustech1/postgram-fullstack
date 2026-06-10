@@ -6,7 +6,8 @@ import { getAccessToken, getRefreshToken, getUser } from "../hooks/user.actions"
 
 
 const axiosService = axios.create({
-    baseURL: "http://localhost:8000",
+//    baseURL: "http://localhost:8000",
+    baseURL: process.env.REACT_APP_API_URL,
     headers: {
         "Content-Type": "application/json",
     },
@@ -35,8 +36,8 @@ const refreshAuthLogic = async (failedRequest) => {
 
     return axios
     
-    .post("/api/auth/refresh/token/", null, {
-        baseURL: "http://localhost:8000",
+    .post("/auth/refresh/token/", null, {
+        baseURL: process.env.REACT_APP_API_URL,
 
         headers: {
             // Authorization: `Bearer ${getAccessToken}`,
